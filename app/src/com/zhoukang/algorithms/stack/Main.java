@@ -1,5 +1,7 @@
 package com.zhoukang.algorithms.stack;
 
+import java.util.Stack;
+
 /**
  * 栈：
  * 栈是一种操作受限的数据结构，只支持入栈和出栈操作。后进先出是它最大的特点。栈既可以通过数组实现，也可以通过链表来实现。不管基于数组还是链表，入栈、出栈的时间复杂度都为O(1)。除此之外，我们还讲了一种支持动态扩容的顺序栈，你需要重点掌握它的均摊时间复杂度分析方法。
@@ -23,4 +25,177 @@ package com.zhoukang.algorithms.stack;
  *
  */
 public class Main {
+
+    public static void main(String[] args){
+        //System.out.println(isBracketMatch("[]{}()"));
+        System.out.println(calculate("2+3-2/2+1"));
+
+    }
+
+    //栈在表达式求值中的应用
+
+    public static int calculate(String str){
+        Stack<Integer> operands = new Stack<>();
+        Stack<Character> operator = new Stack<>();
+        for (int i=0;i<str.length();i++){
+            char c = str.charAt(i);
+            if (isOperator(c)){
+                if (operator.isEmpty()){
+                    operator.push(c);
+                } else {
+                    if (!advanced(operator.peek() , c)){
+                        //计算
+                        operands.push(calculate(operator.pop(),operands.pop(), operands.pop()));
+                        operator.push(c);
+                    } else {
+                        operator.push(c);
+                    }
+                }
+            } else {
+                operands.push(c - '0');
+            }
+        }
+        while (!operator.isEmpty()){
+            operands.push(calculate(operator.pop(),operands.pop(), operands.pop()));
+        }
+        return operands.pop();
+    }
+
+    private static boolean advanced(Character c1, Character c2) {
+        int c1v = 0;
+        int c2v = 0;
+        if (c1 == '+' || c1 == '-') {
+             c1v = 0;
+        } else {
+            c1v = 1;
+        }
+
+        if (c2 == '+' || c2 == '-') {
+            c2v = 0;
+        } else {
+            c2v = 1;
+        }
+        return c2v - c1v > 0;
+    }
+
+    private static Integer calculate(Character symbol, Integer pop2, Integer pop1) {
+        int res = 0;
+        switch (symbol){
+            case '+':
+                res = pop1 + pop2;
+                break;
+            case '-':
+                res = pop1 - pop2;
+                break;
+            case '*':
+                res = pop1 * pop2;
+                break;
+            case '/':
+                res = pop1 / pop2;
+                break;
+        }
+        return res;
+    }
+
+    private static boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' ||c == '/';
+    }
+
+    private static boolean isBracketMatch(String str) {
+        Stack<Character> stack = new Stack<>();
+        for (int i=0; i< str.length(); i++) {
+            char c = str.charAt(i);
+            switch (c){
+                case '[':
+                case '{':
+                case '(':
+                    stack.push(c);
+                    break;
+                case ')':
+                    if (stack.isEmpty() || stack.pop()!='('){
+                        return false;
+                    }
+                    break;
+                case ']':
+                    if (stack.isEmpty() || stack.pop()!='['){
+                        return false;
+                    }
+                    break;
+                case '}':
+                    if (stack.isEmpty() || stack.pop()!='{'){
+                        return false;
+                    }
+                    break;
+                default:
+            }
+        }
+        return stack.isEmpty();
+    }
+
+
+}
+
+//使用数组实现可扩容栈
+class ArrayStack{
+    int count;
+    String[] items;
+    public ArrayStack(){
+        items = new String[16];
+        count = 0;
+    }
+
+    public void push(String value){
+        if (count == items.length){
+            String[] newArr = new String[2*items.length];
+            System.arraycopy(items, 0, newArr,0 , count);
+        }
+        items[count] = value;
+        count++;
+    }
+
+
+    public String pop(){
+        if (count<=0){
+            return null;
+        }
+        return items[--count];
+    }
+}
+
+//模仿浏览器前进后退功能
+class BrowserStack{
+    Stack<String> forword;
+    Stack<String> back;
+    public BrowserStack(){
+        forword = new Stack<>();
+        back = new Stack<>();
+    }
+
+    //打开新页面
+    public void newpager(String url){
+        if (!back.isEmpty()){
+            back.clear();
+        }
+        forword.push(url);
+    }
+
+    //前进
+    public String forward(){
+        if (back.isEmpty()){
+            return null;
+        }
+        String url = back.pop();
+        forword.push(url);
+        return url;
+    }
+
+    //后退
+    public String undo(){
+        if (forword.isEmpty()){
+            return null;
+        }
+        String url = forword.pop();
+        back.push(url);
+        return url;
+    }
 }
