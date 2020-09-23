@@ -1,6 +1,7 @@
 package com.zhoukang.algorithms.stack;
 
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 栈：
@@ -28,12 +29,11 @@ public class Main {
 
     public static void main(String[] args){
         //System.out.println(isBracketMatch("[]{}()"));
-        System.out.println(calculate("2+3-2/2+1"));
+        System.out.println(calculate("2+3-2/2+1*5-7*5"));
 
     }
 
     //栈在表达式求值中的应用
-
     public static int calculate(String str){
         Stack<Integer> operands = new Stack<>();
         Stack<Character> operator = new Stack<>();
@@ -43,13 +43,16 @@ public class Main {
                 if (operator.isEmpty()){
                     operator.push(c);
                 } else {
-                    if (!advanced(operator.peek() , c)){
-                        //计算
-                        operands.push(calculate(operator.pop(),operands.pop(), operands.pop()));
-                        operator.push(c);
-                    } else {
-                        operator.push(c);
+                    while (true){
+                        if (!operator.isEmpty()&&!advanced(operator.peek() , c)){
+                            //计算
+                            operands.push(calculate(operator.pop(),operands.pop(), operands.pop()));
+                        } else {
+                            operator.push(c);
+                            break;
+                        }
                     }
+
                 }
             } else {
                 operands.push(c - '0');
@@ -197,5 +200,28 @@ class BrowserStack{
         String url = forword.pop();
         back.push(url);
         return url;
+    }
+}
+
+//无锁并发队列实现
+class ConcorrentQueue{
+    AtomicReference<Node> head;
+    AtomicReference<Node> tail;
+    public void push(int value){
+        Node node = new Node();
+        node.value = value;
+        Node t = null;
+        do {
+            t = tail.get();
+        } while (tail.compareAndSet(t, node));
+    }
+
+    public int pop(){
+        return 0;
+    }
+
+    class Node{
+        int value;
+        AtomicReference<Node> next;
     }
 }
