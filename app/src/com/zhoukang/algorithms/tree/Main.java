@@ -68,6 +68,13 @@ public class Main {
         List<TreeNode> list10 = new ArrayList<>();
         dfs(root, list10, new HashSet<>());
         System.out.println(list10);
+        System.out.println("指定结点到根结点路径");
+        List<TreeNode> list11 = new ArrayList<>();
+        contains(root,  root.right.right, list11);
+        System.out.println(list11);
+        List<TreeNode> list12 = new ArrayList<>();
+        getNodePath(root,  root.right.right, list12);
+        System.out.println(list12);
         System.out.println("最大深度计算");
         System.out.println(getTreeMaxLevel(root));
         System.out.println(getTreeMaxLevel1(root));
@@ -481,7 +488,10 @@ public class Main {
         return true;
     }
 
-    //求二叉树中结点p和q的第一个公共父节点
+
+    /**
+     *  求二叉树中结点p和q的第一个公共父节点
+     */
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q){
         if (root == null || root == p || root == q) {
             return root;
@@ -498,7 +508,9 @@ public class Main {
         return root;
     }
 
-    //求二叉树中结点p和q的第一个公共父节点
+    /**
+     * 求二叉树中结点p和q的第一个公共父节点
+     */
     public TreeNode lowestCommonAncestorBinTree(TreeNode root, TreeNode p, TreeNode q){
         if (root == null){
             return null;
@@ -510,6 +522,101 @@ public class Main {
             return lowestCommonAncestorBinTree(root.right, p, q);
         }
         return root;
+    }
+
+    public TreeNode lowestCommonAncestorBinTree1(TreeNode root, TreeNode p, TreeNode q){
+        while (root != null){
+            if (root.value > p.value && root.value>q.value){
+                root = root.left;
+            } else if (root.value < p.value && root.value< q.value){
+                root = root.right;
+            } else {
+                return root;
+            }
+        }
+        return null;
+    }
+    //跟结点到指定结点的路径
+    public static boolean contains(TreeNode root, TreeNode node, List<TreeNode> list){
+        if (root == null) {
+            return false;
+        }
+        if (root == node) {
+            list.add(root);
+            return true;
+        }
+        if (contains(root.left, node, list)){
+            list.add(root);
+            return true;
+        } else if (contains(root.right, node, list)){
+            list.add(root);
+            return true;
+        }
+        return false;
+    }
+
+    //跟结点到指定结点的路径
+    public static void getNodePath(TreeNode root, TreeNode node, List<TreeNode> list){
+        if (root == null) {
+            return;
+        }
+        Set<TreeNode> visited = new HashSet<>();
+        Stack<TreeNode> stack = new Stack<>();
+        while (root !=null || !stack.isEmpty()){
+            if (root == node){
+                stack.push(node);
+                break;
+            }
+            if (root != null){
+                visited.add(root);
+                stack.push(root);
+            }
+            if (root!= null && root.left != null && !visited.contains(root.left)){
+                root = root.left;
+            } else if (root!=null && root.right !=null&& !visited.contains(root.left)){
+                root = root.right;
+            } else {
+                root = stack.pop().right;
+            }
+        }
+        for (TreeNode n : stack){
+            list.add(n);
+        }
+    }
+
+    /**
+     * x的y次方
+     * @param x
+     * @param y
+     * @return
+     */
+    public static int pow(int x, int y){
+        if (y < 0){
+            return 1/pow(x, -y);
+        }
+        if (y == 0){
+            return 1;
+        }
+        if (y % 2 ==0){
+            int t = pow(x, y/2);
+            return t*t;
+        } else {
+            int t = pow(x, y/2);
+            return t*t * x;
+        }
+    }
+
+    public static int pow1(int x, int y){
+        if (y<0){
+            x = 1/x;
+            y = -y;
+        }
+        int count = 1;
+        while (count<y){
+            if (count )
+
+            count = 2*count;
+        }
     }
 }
 
