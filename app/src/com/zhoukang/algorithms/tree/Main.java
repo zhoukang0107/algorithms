@@ -613,10 +613,11 @@ public class Main {
         }
         int count = 1;
         while (count<y){
-            if (count )
+           // if (count )
 
             count = 2*count;
         }
+        return 0;
     }
 }
 
