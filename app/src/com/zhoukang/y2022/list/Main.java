@@ -107,9 +107,10 @@ public class Main {
      * @return
      */
     private static boolean hasCycle1(Node node) {
+        Node head = node;
         while (node != null){
-            Node n = node.next;
-            while (n != null){
+            Node n = head;
+            while (n != node){
                 if (n == node){
                     System.out.println("Cycle :" + node.value);
                     return true;

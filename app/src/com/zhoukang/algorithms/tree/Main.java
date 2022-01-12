@@ -27,19 +27,27 @@ public class Main {
         root.right.left.value = 6;
         root.right.right = new TreeNode();
         root.right.right.value = 7;
-
+        System.out.println("前序遍历************************");
         List<TreeNode> list = new ArrayList<>();
         preTraversal(root, list);
         System.out.println(list);
+        System.out.println("************************");
         System.out.println(preTraversal(root));
+        System.out.println("************************");
         System.out.println(preTraversal1(root));
+        System.out.println("************************");
         List<TreeNode> list1 = new ArrayList<>();
         preTraversal1(root, list1);
         System.out.println(list1);
+        System.out.println("************************");
         List<TreeNode> list2 = new ArrayList<>();
         preTraversal2(root, list2);
         System.out.println(list2);
         System.out.println("************************");
+        List<TreeNode> list21 = new ArrayList<>();
+        preTraversal3(root, list21);
+        System.out.println(list21);
+        System.out.println("中序遍历************************");
         List<TreeNode> list3 = new ArrayList<>();
         inTraversal(root, list3);
         System.out.println(list3);
@@ -47,6 +55,10 @@ public class Main {
         inTraversal1(root, list4);
         System.out.println(list4);
         System.out.println("************************");
+        List<TreeNode> list41 = new ArrayList<>();
+        inTraversal2(root, list41);
+        System.out.println(list41);
+        System.out.println("后续遍历************************");
         List<TreeNode> list5 = new ArrayList<>();
         postTraversal(root, list5);
         System.out.println(list5);
@@ -56,6 +68,10 @@ public class Main {
         List<TreeNode> list7 = new ArrayList<>();
         postTraversal2(root, list7);
         System.out.println(list7);
+        System.out.println("************************");
+        List<TreeNode> list71 = new ArrayList<>();
+        postTraversal3(root, list71);
+        System.out.println(list71);
         System.out.println("************************");
         System.out.println("层序遍历");
         List<TreeNode> list8 = new ArrayList<>();
@@ -173,6 +189,25 @@ public class Main {
         }
     }
 
+    public static void preTraversal3(TreeNode root, List<TreeNode> list){
+        Stack<TreeNode> stack = new Stack<>();
+        while (root != null || !stack.isEmpty()){
+            if (root != null){
+                list.add(root);
+                stack.push(root);
+            }
+            if (root != null){
+                if (root.left != null){
+                    root = root.left;
+                } else {
+                    root = root.right;
+                }
+            } else {
+                root = stack.pop().right;
+            }
+        }
+    }
+
     public static void inTraversal(TreeNode root, List<TreeNode> list){
         if (root == null){
             return;
@@ -207,6 +242,29 @@ public class Main {
                         break;
                     }
                 }
+            }
+        }
+    }
+
+
+    public static void inTraversal2(TreeNode root, List<TreeNode> list){
+        if (root == null){
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        while (root != null || !stack.isEmpty()){
+            if (root != null){
+                stack.push(root);
+            }
+            if (root != null && root.left != null){
+                root = root.left;
+            } else if (root != null && root.right != null){
+                list.add(root);
+                root = root.right;
+            } else {
+                TreeNode node = stack.pop();
+                list.add(node);
+                root = node.right;
             }
         }
     }
@@ -275,6 +333,30 @@ public class Main {
         }
         while (!out.isEmpty()){
             list.add(out.pop());
+        }
+    }
+
+    //前序的反序列
+    public static void postTraversal3(TreeNode root, List<TreeNode> list){
+        if (root == null){
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        Stack<TreeNode> nodes = new Stack<>();
+        while (root != null || !stack.isEmpty()){
+            if (root != null){
+                nodes.push(root);
+                stack.push(root);
+            }
+            if (root != null && root.right != null){
+                root = root.right;
+            } else {
+                root = stack.pop().left;
+            }
+        }
+
+        while (!nodes.isEmpty()){
+            list.add(nodes.pop());
         }
     }
 
@@ -606,30 +688,29 @@ public class Main {
         }
     }
 
-    public static int pow1(int x, int y){
+/*    public static int pow1(int x, int y){
         if (y<0){
             x = 1/x;
             y = -y;
         }
         int count = 1;
         while (count<y){
-           // if (count )
+            if (count )
 
             count = 2*count;
         }
-        return 0;
-    }
+    }*/
 }
 
-class TreeNode{
-    int value;
-    TreeNode left;
-    TreeNode right;
-
-    @Override
-    public String toString() {
-        return "TreeNode{" +
-                "value=" + value +
-                '}';
-    }
-}
+//class TreeNode{
+//    int value;
+//    TreeNode left;
+//    TreeNode right;
+//
+//    @Override
+//    public String toString() {
+//        return "TreeNode{" +
+//                "value=" + value +
+//                '}';
+//    }
+//}
