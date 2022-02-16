@@ -8,7 +8,7 @@ public class Main {
      *       1
      *   2       5
      * 3   4   6   7
-     *
+     *   8
      * @param args
      */
     public static void main(String[] args){
@@ -18,6 +18,8 @@ public class Main {
         root.left.value = 2;
         root.left.left = new TreeNode();
         root.left.left.value = 3;
+        root.left.left.right = new TreeNode();
+        root.left.left.right.value = 8;
         root.left.right = new TreeNode();
         root.left.right.value = 4;
 
@@ -32,7 +34,7 @@ public class Main {
         preTraversal(root, list);
         System.out.println(list);
         System.out.println("************************");
-        System.out.println(preTraversal(root));
+        //System.out.println(preTraversal(root));
         System.out.println("************************");
         System.out.println(preTraversal1(root));
         System.out.println("************************");
@@ -52,9 +54,9 @@ public class Main {
         inTraversal(root, list3);
         System.out.println(list3);
         List<TreeNode> list4 = new ArrayList<>();
-        inTraversal1(root, list4);
+        inTraversal12(root, list4);
         System.out.println(list4);
-        System.out.println("************************");
+        System.out.println("zzz************************");
         List<TreeNode> list41 = new ArrayList<>();
         inTraversal2(root, list41);
         System.out.println(list41);
@@ -126,27 +128,6 @@ public class Main {
         return list;
     }
 
-    public static  List<TreeNode> preTraversal(TreeNode node){
-        List<TreeNode> list = new ArrayList<>();
-        Stack<TreeNode> stack = new Stack<>();
-        while (node != null || !stack.isEmpty()){
-            if (node != null){
-                stack.push(node);
-                list.add(node);
-            }
-            //左结点不为空
-            if (node != null && node.left != null){
-                node = node.left;
-            } else if (node != null && node.right!=null){ //左结点为空的话，访问右结点
-                node = node.right;
-            } else {
-                //node的左右结点都为空，该结点出栈
-                node = stack.pop().right;
-            }
-        }
-        return list;
-    }
-
     /**
      * 前序遍历 非递归
      * @param node
@@ -160,12 +141,28 @@ public class Main {
             list.add(node);
             if (node.left != null){
                 node = node.left;
-            } else if (node.right != null){
-                node = node.right;
             } else {
                 do {
                     node = stack.pop().right;
-                } while (!stack.isEmpty()&&node == null);
+                } while (!stack.isEmpty() && node == null);
+            }
+        }
+    }
+
+    public static void preTraversal11(TreeNode root, List<TreeNode> list){
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        while (node!=null || !stack.isEmpty()){
+            if (node != null){
+                stack.push(node);
+                list.add(node);
+                if (node.left != null){
+                    node = node.left;
+                } else {
+                    node = stack.pop().right;
+                }
+            } else {
+                node = stack.pop().right;
             }
         }
     }
@@ -181,8 +178,6 @@ public class Main {
 
             if (node != null && node.left != null){
                 node = node.left;
-            } else if (node != null && node.right != null){
-                node = node.right;
             } else {
                 node = stack.pop().right;
             }
@@ -200,7 +195,7 @@ public class Main {
                 if (root.left != null){
                     root = root.left;
                 } else {
-                    root = root.right;
+                    root = stack.pop().right;
                 }
             } else {
                 root = stack.pop().right;
@@ -223,30 +218,60 @@ public class Main {
         }
         Stack<TreeNode> stack = new Stack<>();
         TreeNode node = root;
-        while (node!= null || !stack.isEmpty()){
-            if (node!=null){
-                stack.push(node);
-            }
-            if (node != null && node.left != null){
+        while (node!= null){
+            stack.push(node);
+            if (node.left != null){
                 node = node.left;
-            } else if (node != null && node.right != null){
-                node = node.right;
             } else {
-                list.add(stack.pop());
-                node = null;
-                while (!stack.isEmpty()){
-                    TreeNode n = stack.pop();
-                    list.add(n);
-                    if (n.right!= null){
-                        node = n.right;
-                        break;
-                    }
-                }
+                do {
+                    node = stack.pop();
+                    list.add(node);
+                    node = node.right;
+                } while (!stack.isEmpty() && node ==null);
             }
         }
     }
 
+    public static void inTraversal11(TreeNode root, List<TreeNode> list){
+        if (root == null){
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        while (node!= null || !stack.isEmpty()){
+            if (node!= null){
+                stack.push(node);
+                if (node.left != null){
+                    node = node.left;
+                } else {
+                    node = stack.pop();
+                    list.add(node);
+                    node = node.right;
+                }
+            } else {
+                node = stack.pop();
+                list.add(node);
+                node = node.right;
+            }
+        }
+    }
 
+    public static void inTraversal12(TreeNode root, List<TreeNode> list){
+        if (root == null){
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        while (node!= null || !stack.isEmpty()){
+            while (node!= null){
+                stack.push(node);
+                node = node.left;
+            }
+            node = stack.pop();
+            list.add(node);
+            node = node.right;
+        }
+    }
     public static void inTraversal2(TreeNode root, List<TreeNode> list){
         if (root == null){
             return;
@@ -259,12 +284,39 @@ public class Main {
             if (root != null && root.left != null){
                 root = root.left;
             } else if (root != null && root.right != null){
-                list.add(root);
-                root = root.right;
+                TreeNode node = stack.pop();
+                list.add(node);
+                root = node.right;
             } else {
                 TreeNode node = stack.pop();
                 list.add(node);
                 root = node.right;
+            }
+        }
+    }
+
+
+    public static void inTraversal3(TreeNode root, List<TreeNode> list){
+        if (root == null){
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode node = root;
+        while (node!= null || !stack.isEmpty()){
+            if (node!=null){
+                stack.push(node);
+            }
+            if (node != null && node.left != null){
+                node = node.left;
+            } else if (node != null && node.right != null){
+                list.add(stack.pop());
+                node = node.right;
+            } else {
+                if (node == null){
+                    TreeNode n = stack.pop();
+                    node = n.right;
+                    list.add(n);
+                }
             }
         }
     }
